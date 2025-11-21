@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winnipeg Weather Data</title>
+</head>
+<body>
+    <!--UI TITLE-->
+    <header>Winnipeg Weather Data</header>
+
+    <nav>
+        <button>Download Weather Data</button>
+        <button>Update Weather Data</button>
+        <button onclick="WeatherPlotForm()">Weather Data Graphs</button>
+    </nav>
+    <div class="container" id="content-area">
+        <h2>Welcome!</h2>
+        <p>Select an option from the navigation bar to get started!</p>
+    </div>
+
+    <script>
+        function WeatherPlotForm() {
+        document.getElementById("content-area").innerHTML = `
+        <h2>Weather Plot Data</h2>
+        <div class="row">
+            <div class="form-section">
+                <h3>Box Plot - Year Range</h3>
+                <label>Start Year</label>
+                <input type="number" id="start-year"><br><br>
+
+                <label>End Year</label>
+                <input type="number" id="end-year"><br><br>
+
+                <button>Generate Box Plot</button>
+            </div>
+
+            <div class="form-section">
+                <h3>Line Plot - Year and Month</h3>
+                <label>Year:</label>
+                <input type="number" id="plot-year"><br><br>
+
+                <label>Month (1-12):</label>
+                <input type="number" id="plot-month"><br><br>
+
+                <button>Generate Line Plot</button>
+            </div>
+        </div>
+            `;
+        }
+    </script>
+</body>
+</html>
