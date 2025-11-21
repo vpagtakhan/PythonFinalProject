@@ -7,7 +7,10 @@ Description:
 from dbcm import DBCM
 
 class DBOperations:
+    """Database class to insert scraped weather data and prepare data to be used for plotting"""
+
     def __init__(self, db_name="weather.db"):
+        """initialize database"""
         self.db_name = db_name
         self._initialize_db()
 
@@ -23,12 +26,11 @@ class DBOperations:
                            max_temp REAL,
                            avg_temp REAL,
                            UNIQUE(sample_date, location)
-                           )
-                           
-                           """)
-            
+                           )"""
+        )            
     def save_weather_data(self, location: str, data: dict):
-        """Saving scraped weather data and inserting into database table, if there are duplicates; we ignore them."""
+        """Saving scraped weather data and inserting into database table, 
+        if there are duplicates; we ignore them."""
         with DBCM(self.db_name) as cursor:
             for sample_date, temps in data.items():
                 cursor.execute("""
@@ -44,11 +46,14 @@ class DBOperations:
     def purge_data(self):
         """purge existing weather data to prepare for new data"""
         with DBCM(self.db_name) as cursor:
-            cursor.execute("DELETE * FROM weather")
+            cursor.execute("DELETE FROM weather")
 
     def fetch_all_as_dict(self):
+        """preparing data to display as a dictionary of dictionaries"""
         with DBCM(self.db_name) as cursor:
-            cursor.execute("SELECT sample_date, location, min_temp, max_temp, avg_temp FROM weather ORDER BY sample_date ASC")
+            cursor.execute(""""SELECT sample_date, location, min_temp, max_temp, avg_temp
+                           FROM weather 
+                           ORDER BY sample_date ASC""")
             rows = cursor.fetchall()
 
             grouped = {}
@@ -67,14 +72,10 @@ class DBOperations:
                     "max_temp": max_temp,
                     "avg_temp": avg_temp
                 }
-
         return grouped
-        
     def fetch_mean_month(self, year: int) -> dict[int, list[float]]:
-        """fetch daily temps for 1 month"""
-        
+        """fetch daily temps for 1 month of a specific year"""        
         result = {m: [] for m in range(1,13)}
-
         
         with DBCM(self.db_name) as cursor:
             cursor.execute("""
@@ -82,8 +83,7 @@ class DBOperations:
             FROM WEATHER
             WHERE strftime('%Y', sample_date) = ?
             ORDER BY sample_date ASC;"""
-        , (str(year),))
-            
+        , (str(year),))            
             rows = cursor.fetchall()
 
             for sample_date, avg_temp in rows:
@@ -96,6 +96,7 @@ class DBOperations:
         return result
     
     def fetch_mean_year_range(self, start_year: int, end_year: int):
+        """fetch temperatures based on year range (ex. 2020-2024)"""
 
         with DBCM(self.db_name) as cursor:
             cursor.execute("""
@@ -107,6 +108,5 @@ class DBOperations:
                     BETWEEN ? AND ?
                 GROUP BY year
                 ORDER BY year ASC;
-                """, (start_year, end_year))
-            
+                """, (start_year, end_year))            
             return cursor.fetchall()

@@ -8,7 +8,9 @@ Description:
 import sqlite3
 
 class DBCM:
+    """Database context manager which establishes a connection to the database"""
     def __init__(self, db_name):
+        """initializing db_name and setting connection and cursor variable"""
         self.db_name = db_name
         self.conn = None
         self.cursor = None
